@@ -67,7 +67,6 @@ void connectToOTA(){
   Serial.println("OTA ready");
   // print a new line to the monitor
   Serial.println("\n");
-
 }
 
 //Connect to wifi network
