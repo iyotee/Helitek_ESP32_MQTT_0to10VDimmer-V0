@@ -16,6 +16,8 @@
 #include <SPIFFS.h> //SPIFFS library
 #include <analogwrite.h> //Analogwrite library
 #include <ArduinoOTA.h> //ArduinoOTA library
+#include <ESPmDNS.h> //ESPmDNS library
+#include <WiFiUdp.h> //WiFiUdp library
 
 //Define the pin for the dimmer
 #define DIMMER_PIN 25
@@ -88,9 +90,9 @@ void setup_wifi(){ //setup wifi function
   }
   Serial.println(); //print a new line to the serial monitor to show the connection has been established 
   Serial.println("WiFi connected"); //print to the serial monitor that the wifi connection has been established
-  Serial.println("Wifi IP address: "); //print to the serial monitor that the ip address is 
+  Serial.print("Wifi IP address: "); //print to the serial monitor that the ip address is 
   Serial.print(WiFi.localIP()); //print the ip address to the serial monitor
-  Serial.print("Wifi Hostname: "); //print to the serial monitor that the hostname is
+  Serial.print("\nWifi Hostname: "); //print to the serial monitor that the hostname is
   Serial.println(WiFi.getHostname()); //print the hostname to the serial monitor
   Serial.println("\n"); //print a new line to the serial monitor
 
