@@ -181,7 +181,6 @@ void setup() { //setup function
   client.setCallback(callback); //Set callback function for incomming messages from MQTT broker 
   //OTA
   connectToOTA(); //Connect to OTA
-
 }
 
 //Loop forever
