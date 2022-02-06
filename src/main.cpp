@@ -15,6 +15,7 @@
 #include <PubSubClient.h> //PubSubClient library
 #include <SPIFFS.h> //SPIFFS library
 #include <analogwrite.h> //Analogwrite library
+#include <ArduinoOTA.h> //ArduinoOTA library
 
 //Define the pin for the dimmer
 #define DIMMER_PIN 25
@@ -42,6 +43,9 @@ const char* mqtt_statebrightnesstopic_channel1 = "helitek/dimmers/010v/brightnes
 //Wifi configuration
 #define WIFI_HOSTNAME "Helitek-LedDimmer-V0" //your Wifi hostname ex: "AC Dimmer"
 
+//OTA configuration
+#define OTA_HOSTNAME "Helitek-LedDimmer-V0" //your OTA hostname ex: "AC Dimmer"
+
 //MQTT variables
 char msg[50]; //buffer for MQTT messages (must be big enough to hold the message) 
 
@@ -49,7 +53,22 @@ char msg[50]; //buffer for MQTT messages (must be big enough to hold the message
 WiFiClient wclient; //WiFi client 
 
 //Instanciate PubSubClient(client) from PubSubClient class from PubSubClient library with the wifi client as parameter 
-PubSubClient client(wclient); // Setup MQTT client with wifi client 
+PubSubClient client(wclient); // Setup MQTT client with wifi client
+
+// OTA functions
+void connectToOTA(){
+  // Connect to OTA server
+  ArduinoOTA.setHostname(OTA_HOSTNAME);
+  ArduinoOTA.setPasswordHash("5f4dcc3b5aa765d61d8327deb882cf99");
+  ArduinoOTA.setMdnsEnabled(true);
+  ArduinoOTA.setPort(3232);
+  ArduinoOTA.setTimeout(20000);
+  ArduinoOTA.begin();
+  Serial.println("OTA ready");
+  // print a new line to the monitor
+  Serial.println("\n");
+
+}
 
 //Connect to wifi network
 void setup_wifi(){ //setup wifi function
@@ -70,9 +89,12 @@ void setup_wifi(){ //setup wifi function
   }
   Serial.println(); //print a new line to the serial monitor to show the connection has been established 
   Serial.println("WiFi connected"); //print to the serial monitor that the wifi connection has been established
-  Serial.println("IP address: "); //print to the serial monitor that the ip address is 
-  Serial.println(WiFi.localIP()); //print the ip address to the serial monitor 
+  Serial.println("Wifi IP address: "); //print to the serial monitor that the ip address is 
+  Serial.print(WiFi.localIP()); //print the ip address to the serial monitor
+  Serial.print("Wifi Hostname: "); //print to the serial monitor that the hostname is
   Serial.println(WiFi.getHostname()); //print the hostname to the serial monitor
+  Serial.println("\n"); //print a new line to the serial monitor
+
 }
 
 // Reconnect to client
@@ -157,6 +179,9 @@ void setup() { //setup function
   //setup MQTT //
   client.setServer(MQTT_SERVER, mqtt_port); //Set MQTT server and port
   client.setCallback(callback); //Set callback function for incomming messages from MQTT broker 
+  //OTA
+  connectToOTA(); //Connect to OTA
+
 }
 
 //Loop forever
@@ -165,4 +190,6 @@ void loop() { //loop function
     reconnect(); //then reconnect
   }
   client.loop(); //Check for incomming messages from MQTT broker
+  //Handle OTA
+  ArduinoOTA.handle(); //OTA handling
 }
